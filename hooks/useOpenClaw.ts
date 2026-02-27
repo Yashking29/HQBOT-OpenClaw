@@ -258,6 +258,22 @@ export function useOpenClaw(): UseOpenClawReturn {
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
+        // Send JSON-RPC handshake immediately to establish operator role
+        ws.send(
+          JSON.stringify({
+            type: 'req',
+            id: 'handshake-1',
+            method: 'connect',
+            params: {
+              client: {
+                id: 'architect-ui',
+                version: '1.0.0',
+                platform: 'web',
+              },
+              role: 'operator',
+            },
+          }),
+        );
         setStatus('connected');
         resolve(ws);
       };
