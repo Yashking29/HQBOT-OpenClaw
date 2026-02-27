@@ -243,9 +243,15 @@ export function useOpenClaw(): UseOpenClawReturn {
       }
 
       // Upgrade http(s):// → ws(s)://
-      const wsUrl = rawUrl
+      const wsBase = rawUrl
         .replace(/^https:\/\//, 'wss://')
         .replace(/^http:\/\//, 'ws://');
+
+      // Append gateway token if configured
+      const token = process.env.NEXT_PUBLIC_GATEWAY_TOKEN;
+      const wsUrl = token
+        ? `${wsBase}${wsBase.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`
+        : wsBase;
 
       setStatus('connecting');
 
